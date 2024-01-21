@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -52,18 +53,75 @@ char check_win(char grid[][3]) {
   return ' ';
 }
 
-/* Generate random move and place the sign of the computer on the grid */
-void computer_play(char (*grid)[3], char computer) {
-  srand(time(0));
-  int row = rand() % 3;
-  int col = rand() % 3;
-
-  while (grid[row][col] != ' ') {
-    row = rand() % 3;
-    col = rand() % 3;
+float minimax(char grid[][3], int depth, int isMaximizing, char computer,
+              char user) {
+  char winner = check_win(grid);
+  if (winner != ' ') {
+    float score = 0;
+    if (winner == computer) {
+      score = 10 - depth;
+    } else if (winner == user) {
+      score = depth - 10;
+    } else {
+      score = 0;
+    }
+    return score;
   }
 
-  grid[row][col] = computer;
+  if (isMaximizing) {
+    float bestScore = -INFINITY;
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        if (grid[i][j] == ' ') {
+          grid[i][j] = computer;
+          float score = minimax(grid, depth + 1, 0, computer, user);
+          grid[i][j] = ' ';
+          if (score > bestScore) {
+            bestScore = score;
+          }
+        }
+      }
+    }
+    return bestScore;
+  } else {
+    float bestScore = INFINITY;
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        if (grid[i][j] == ' ') {
+          grid[i][j] = user;
+          float score = minimax(grid, depth + 1, 1, computer, user);
+          grid[i][j] = ' ';
+          if (score < bestScore) {
+            bestScore = score;
+          }
+        }
+      }
+    }
+    return bestScore;
+  }
+}
+
+/* Generate random move and place the sign of the computer on the grid */
+int computer_play(char (*grid)[3], char computer, char user) {
+  float bestScore = -INFINITY;
+  int bestMove[2] = {0, 0};
+
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      if (grid[i][j] == ' ') {
+        grid[i][j] = computer;
+        int score = minimax(grid, 0, 0, computer, user);
+        grid[i][j] = ' ';
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove[0] = i;
+          bestMove[1] = j;
+        }
+      }
+    }
+  }
+
+  grid[bestMove[0]][bestMove[1]] = computer;
 }
 
 /* Ask for the player's move and start a while loop if choose an already used
@@ -122,7 +180,7 @@ void start_game() {
     }
 
     printf("Let see what the computer will play... \n");
-    computer_play(grid, computer);
+    computer_play(grid, computer, user);
     print_grid(grid);
     winner = check_win(grid);
   }
