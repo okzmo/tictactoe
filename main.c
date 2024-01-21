@@ -14,6 +14,17 @@ void print_grid(char grid[][3]) {
   }
 }
 
+int is_grid_full(char grid[][3]) {
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      if (grid[i][j] == ' ') {
+        return 0;
+      }
+    }
+  }
+  return 1;
+}
+
 char check_win(char grid[][3]) {
   char winChar;
   int i;
@@ -48,6 +59,10 @@ char check_win(char grid[][3]) {
   winChar = grid[0][2];
   if (winChar != ' ' && winChar == grid[1][1] && winChar == grid[2][0]) {
     return winChar;
+  }
+
+  if (is_grid_full(grid)) {
+    return 'T';
   }
 
   return ' ';
@@ -110,7 +125,9 @@ int computer_play(char (*grid)[3], char computer, char user) {
     for (int j = 0; j < 3; j++) {
       if (grid[i][j] == ' ') {
         grid[i][j] = computer;
-        int score = minimax(grid, 0, 0, computer, user);
+        float score = minimax(grid, 0, 0, computer, user);
+        print_grid(grid);
+        printf("%f\n", score);
         grid[i][j] = ' ';
         if (score > bestScore) {
           bestScore = score;
@@ -137,17 +154,6 @@ void player_play(char (*grid)[3], char user) {
   }
 
   grid[choice[0] - '0' - 1][choice[2] - '0' - 1] = user;
-}
-
-int is_grid_full(char grid[][3]) {
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      if (grid[i][j] == ' ') {
-        return 0;
-      }
-    }
-  }
-  return 1;
 }
 
 void start_game() {
@@ -185,8 +191,8 @@ void start_game() {
     winner = check_win(grid);
   }
 
-  if (winner == ' ') {
-    printf("There's no winner...\n");
+  if (winner == 'T') {
+    printf("It's a tie!\n");
   } else {
     printf("Player %c is the winner!\n", winner);
   }
