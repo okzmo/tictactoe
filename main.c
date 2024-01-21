@@ -71,11 +71,11 @@ void computer_play(char (*grid)[3], char computer) {
 void player_play(char (*grid)[3], char user) {
   char choice[] = "0,0";
   printf("What's your move ? (R,C)\n");
-  scanf_s("%s", choice);
+  scanf("%s", choice);
 
   while (grid[choice[0] - '0' - 1][choice[2] - '0' - 1] != ' ') {
     printf("You can't play there! Choose another move.\n");
-    scanf_s("%s", choice);
+    scanf("%s", choice);
   }
 
   grid[choice[0] - '0' - 1][choice[2] - '0' - 1] = user;
@@ -106,7 +106,7 @@ void start_game() {
 
   printf("Welcome to this tic tac toe game, who do you want to play ?\n");
   printf("Write either: O or X\n");
-  scanf_s("%c", &user);
+  scanf("%c", &user);
   if (user == 'O') {
     computer = 'X';
   } else {
