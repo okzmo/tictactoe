@@ -10,4 +10,6 @@ This will generate an executable that you can use:
 `.\a.exe`
 
 Of course this will work only if you use windows as your OS but in the case you use either mac or linux you can use:
-`./a`
+`./a.out`
+
+Finally this is just a really simple tic tac toe the computer against you is not even trying to win since its movement are random but I'll try to improve that in the near future.
